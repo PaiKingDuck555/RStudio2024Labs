@@ -1,0 +1,125 @@
+---
+title: "Lab2"
+author: "Damodar Pai"
+date: 1/29/2024
+output:
+  html_document:
+    toc: yes 
+    toc_float: yes
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Tasks 
+
+## Task 1 
+```{r}
+getwd()
+```
+Above is the working directory that we've saved our file. 
+
+## Task 2 
+```{r}
+epagas = read.csv("EPAGAS.csv") 
+head(epagas)
+
+```
+Here we have read and printed the first 6 rows of the csv file.  
+
+## Task 3
+```{r}
+#myread=function(csv){
+#  fl=paste("C:\\Users\\damodarpai\\Documents\\Labratories\\Lab2\\",csv,sep="")
+#  read.table(fl,header=TRUE,sep=",")
+#}
+#myread(list.files())
+mpg <- epagas$MPG 
+```
+We assign the MPG column to the variable mpg. 
+
+
+```{r}
+
+zval <- (mpg - mean(mpg))/(sd(mpg))
+
+```
+Above, we are trying to find the z-value for the mpg data. This is represented by our function and z-val.  
+
+```{r}
+mean(zval) 
+(sd(zval)^2)
+
+```
+We can further verify our results because the mean of our data is nearly 0 and our standard deviation is 1 which are both characteristics of the z-value.  
+
+```{r} 
+summary(zval) 
+
+zval[abs(zval) >= 2 & abs(zval)<= 3] 
+mpg[abs(zval) >= 2 & abs(zval)<= 3]
+```
+Above we have a summary of the data as well as possible outliers that are defined as having outliers between 2 and 3.  
+
+```{r} 
+zval[(abs(zval)>3)] 
+mpg[abs(zval)>3]  
+
+```
+Above, we have the defined outliers that are defined as having a z-value greater than 3. 
+```{r}
+#IQR = 0.550478 + 0.545515 
+#zval[( (zval >= 0.550478 + (1.5*IQR) | zval<= -0.545515 - (1.5*IQR)) & abs(zval)<= 3)]   
+mycol = ifelse((abs(zval)>3) , "Blue",
+        ifelse(( abs(zval) >= 2 & abs(zval)<= 3),"Red", "Black"))  
+
+``` 
+The possible outliers are the ones with a z-value between 2 and 3. The defined outliers are the values with a z-value that is greater 
+than 3. 
+Above, we are setting the colors for the possible and defined outliers. 
+```{r} 
+library(lattice) 
+dotplot(mpg, col=mycol)
+```
+Above is a dotplot representative of the possible outliers represented in red and the defined outliers represented in blue. 
+
+## Task 4 
+```{r}
+boxplot(mpg,main = "MPG Boxplot", notch = TRUE,horizontal = TRUE, col="black")    
+``` 
+
+```{r}
+length(mpg[mean(mpg)-(2*sd(mpg)) < mpg & mpg < mean(mpg)+ (2*sd(mpg)) ])/length(mpg) 
+
+```
+Using Chebyshev's rule, I predict that the proportion of data will be greater than 75%. 
+Above is the proportion of our data that's within an interval that is 2SD of the mean. 
+```{r}
+length(mpg[mean(mpg)-(3*sd(mpg)) < mpg & mpg < mean(mpg)+ (3*sd(mpg)) ])/length(mpg)
+
+```
+Above is the proportion of our data that's within an interval that is 3SD of the mean. 
+
+Chesbyshev's rule does agree with the data because the rule claims that for all data, atleast 75% of data is within 2SD and 89% of data is within 3 SD. Note any amount of data can be in 1SD. As we can see in the data above, 96% of data is within 2SD and 99% of data is within 3SD thus fulfilling the rule. 
+
+```{r}
+length(mpg[mean(mpg)-(1*sd(mpg)) < mpg & mpg < mean(mpg)+ (1*sd(mpg)) ])/length(mpg) 
+hist(mpg)
+
+```
+
+Above is the proportion of our data that's within an interval that is 1SD of the mean as well as a histogram to prove symmetry and a mound shape.
+
+According to the Empirical Rule, as long as the data is in a mound shape, has a symmetric distribution,and around 68% of data is within 1SD and around 95% of data should be within 2SD and around 99% of data should be within 3SD. 
+
+This corresponds well with our data since 96% of our data is within 2SD and 99% of data is within 3SD.  
+
+The empirical rule is validated because I proved that atleast 68% of our data is within 1SD, atleast 95% is within 2SD and atleast 99% is within 3SD. Furthermore, I showed that the data is symmetric and has a mound shape. 
+
+
+```
+
+
+
+
+
