@@ -1,0 +1,132 @@
+---
+title: "Lab1"
+author: "Damodar Pai"
+date: "r Sys.Date()"
+output:
+  html_document:
+    toc: yes 
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Tasks 
+
+Lab 1 tasks 
+
+## Task 1 
+```{r}
+getwd()
+```
+## Task 2 
+```{r}
+ddt <- read.csv("DDT.csv") 
+head(ddt) 
+
+```
+## Task 3 
+```{r} 
+sapply(ddt,class)   
+```
+Qualitative variables are "River" and "Species" because their data types are character. 
+Quantitative variables are "Mile", "Length", "Weight", and "DDT" are either numeric or integers meaning that they're numbers. 
+
+```{r} 
+table(ddt$SPECIES) 
+```
+There are 3 species. 
+
+```{r}
+ddt[ddt$SPECIES == "LMBASS" & ddt$WEIGHT > 800,]  
+ddt[ddt$RIVER == "SCM" & ddt$DDT > 4.0,] 
+ddt[ddt$RIVER == "SCM" & ddt$DDT > 4.0,] 
+with(ddt, ddt[SPECIES == "LMBASS" & WEIGHT > 800,]) 
+?which.max()
+```
+ddt[]
+
+  
+
+
+
+## Task 4 
+```{r} 
+L <-ddt$LENGTH 
+mean(L)  
+```
+Q.1) The mean is 42.8125 cm.
+```{r}
+W <-ddt$WEIGHT 
+sd(W) 
+```
+Q.2) The standard deviation is 376.5461 gms.  
+```{r}
+library(dplyr)
+library(ggplot2) 
+with(ddt,plot(WEIGHT,LENGTH))  
+#plot(ddt$WEIGHT,ddt$LENGTH, xlab = "WEIGHT",ylab="LENGTH")
+```
+Q.3) 0 - No(It seems like the x-axis is Length and the y-axis is Weight in the give graph) 
+```{r}
+v = 1:20  
+v/20
+```
+
+Q.4) The last value of v/20 is 1. 
+
+## Task 5
+```{r}
+riv = table(ddt$RIVER) 
+riv
+barplot(riv,col= rainbow(4))
+rivAndSp = with(ddt,table(RIVER,SPECIES))  
+barplot(rivAndSp, col=rainbow(4))
+
+```
+
+
+## Task 6
+```{r}
+sp = with(ddt,table(SPECIES))
+pie(sp, col=rainbow(3)) 
+pie(riv, col=rainbow(4))
+```
+
+
+## Task 7
+```{r}
+with(ddt,boxplot(DDT,ylab="DDT",col="Blue")) 
+with(ddt,boxplot(WEIGHT,ylab="WEIGHT",col="Blue")) 
+with(ddt,boxplot(LENGTH,ylab="LENGTH",col="Blue")) 
+
+
+```
+
+
+
+## Task 8
+```{r}
+rivcol=with(ddt, ifelse(RIVER=="FCM","Red",
+                        ifelse(RIVER=="LCM","Blue",
+                               ifelse(RIVER=="SCM","Green","Black"))))
+fishcol=with(ddt,ifelse(SPECIES=="CCATFISH","Red",
+                        ifelse(SPECIES=="SMBUFFALO","Blue","Green")))
+
+coplot(LENGTH~WEIGHT|RIVER,data=ddt,col=rivcol)
+coplot(DDT~WEIGHT|SPECIES,data=ddt,col=fishcol) 
+
+```
+
+
+## Task 9
+```{r}
+library(ggplot2) 
+ggplot(ddt,mapping = aes(SPECIES,WEIGHT,fill=RIVER)) + geom_boxplot() +ggtitle("Damodar Pai") 
+ggplot(ddt,mapping = aes(RIVER,LENGTH,fill=SPECIES)) + geom_violin() +ggtitle("Damodar Pai") 
+ggplot(ddt,mapping = aes(WEIGHT,LENGTH,color=SPECIES)) + geom_point() +ggtitle("Damodar Pai") 
+
+```
+
+
