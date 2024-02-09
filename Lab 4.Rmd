@@ -1,0 +1,66 @@
+---
+title: "Lab 4"
+author: "Damodar Pai"
+date: "2024-02-08"
+output: html_document 
+  toc: yes 
+  toc_float:yes
+---
+#Tasks 
+
+##Task 1
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+getwd() 
+```
+
+## Task 2
+
+```{r}
+spruce = read.csv("SPRUCE.csv") 
+tail(spruce)
+```
+ 
+## Task 3 
+```{r} 
+library(s20x) 
+trendscatter(Height ~ BHDiameter, f=0.5,spruce) 
+
+``` 
+The above plot is the fitting of a line to the spruce data with f=0.5 level smoothness. 
+
+```{r}
+spruce.lm = with(spruce, lm(Height ~ BHDiameter))  
+height.res = residuals(spruce.lm)  
+height.fit = fitted(spruce.lm)  
+```
+Above we are creating the spruce model object and then using that we are creating the residual and fitted objects. 
+```{r}
+plot(height.fit, height.res, col="R") 
+``` 
+
+```{r}
+trendscatter(height.fit, height.res) 
+```
+The plot is in a uni modal and symmetric shape. The above data is the residuals vs the fitted data. This basically tells us how close our model is to the given data from a linear moidel. We are trying to create a model so that the residual heights are as close to 0 as possible.  
+This curve is very similar to the previous trendscatter plot. 
+```{r}
+plot(spruce.lm) 
+```
+```{r}
+normcheck(spruce.lm,shapiro.wilk = TRUE) 
+
+```
+There clearly isn't constant variance as we can tell from our previous trendscatter plot. Thus, it seems like it doesn't make sense to apply a straight line and we should explore other types of models including a quadratic model. 
+
+```{r}
+quad.lm = 
+```
+
+
+
+
+## Task 4 
+
