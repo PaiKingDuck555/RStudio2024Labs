@@ -1,14 +1,17 @@
 ---
 title: "Lab 4"
 author: "Damodar Pai"
-date: "2024-02-08"
-output: html_document 
-  toc: yes 
-  toc_float:yes
+date: "2024-02-09"
+output: 
+  html_document:
+    toc: yes 
+    toc_float: yes
 ---
-#Tasks 
 
-##Task 1
+# Tasks 
+
+## Task 1
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -38,14 +41,19 @@ height.fit = fitted(spruce.lm)
 ```
 Above we are creating the spruce model object and then using that we are creating the residual and fitted objects. 
 ```{r}
-plot(height.fit, height.res, col="R") 
+plot(height.fit, height.res, col="Red") 
 ``` 
 
 ```{r}
 trendscatter(height.fit, height.res) 
 ```
-The plot is in a uni modal and symmetric shape. The above data is the residuals vs the fitted data. This basically tells us how close our model is to the given data from a linear moidel. We are trying to create a model so that the residual heights are as close to 0 as possible.  
-This curve is very similar to the previous trendscatter plot. 
+
+
+The plot is in a uni modal and symmetric shape. It seems quadratic. The above data is the residuals vs the fitted data. This basically tells us how close our model is to the given data from a linear moidel. We are trying to create a model so that the residual heights are as close to 0 as possible.  
+This curve is very similar to the previous trendscatter plot.
+
+
+
 ```{r}
 plot(spruce.lm) 
 ```
@@ -53,14 +61,215 @@ plot(spruce.lm)
 normcheck(spruce.lm,shapiro.wilk = TRUE) 
 
 ```
-There clearly isn't constant variance as we can tell from our previous trendscatter plot. Thus, it seems like it doesn't make sense to apply a straight line and we should explore other types of models including a quadratic model. 
+
+
+The Shapiro-Wilk Test value is 0.9643.  
+
+The null hypothesis is that there is no relationship between the model and the given data. 
+
+There clearly isn't constant variance as we can tell from our previous trendscatter plot. Thus, it seems like it doesn't make sense to apply a straight line and we should explore other types of models including a quadratic model.  
+
+
+
+## Task 4  
 
 ```{r}
-quad.lm = 
+quad.lm=lm(Height~BHDiameter + I(BHDiameter^2),data=spruce)
+quad.fit = fitted(quad.lm) 
+quad.res = residuals(quad.lm)
+plot(Height~BHDiameter,bg="Blue",pch=21,cex=1.2,
+ylim=c(0,max(Height)),xlim=c(0,max(BHDiameter)), 
+main="Spruce height prediction",data=spruce)  
+myplot=function(x){
+ 0.86089580 +1.46959217*x  -0.02745726*x^2
+ }
+
+# add the quadratic to the points 
+curve(myplot, lwd=3, col="steelblue",add=TRUE)
+
+
+``` 
+
+
+I() is 'as is' 
+
+```{r}
+plot(quad.lm)
+```
+```{r}
+normcheck(quad.lm,shapiro.wilk = TRUE) 
+
+```
+P-value is 0.684. Thus, we can only conclude that our null hypothesis about the model isn't rejected.   
+
+
+## Task 5
+```{r}
+summary(quad.lm) 
+0.860896  - 2.205022 
+0.860896  + 2.205022  
+1.469592+ 0.243786 
+1.469592 - 0.243786 
+-0.027457 + 0.006635  
+-0.027457 - 0.006635 
 ```
 
 
+Coefficients
+B0 = 0.8609 
 
 
-## Task 4 
+B1 = 1.4696 
+
+
+B2 = -0.02746
+
+
+
+Coefficient Interval Estimates: 
+
+
+-1.344126<B0<3.065918 
+
+
+1.225806<B1<1.713378 
+
+
+-0.034092<B2<-0.020822 
+
+
+
+Equations: 
+
+Height = 0.8609 + 1.4696(BHDiameter) - 0.02746(BHDiameter)^2 
+
+```{r}
+predict(quad.lm, data.frame(BHDiameter=c(15,18,20))) 
+predict(spruce.lm, data.frame(BHDiameter=c(15,18,20)))  
+```
+The first row is current predictions. 
+
+
+The second row is previous predictions. 
+
+
+Compared to the previous predictions, these predictions are larger which might be more accurate since the last linear model seemed to go under a large chunk of the data.   
+
+```{r}
+summary(quad.lm) 
+summary(spruce.lm)
+```
+Current Model Multiple R-Squared: 0.7741 
+
+
+Previous Model Multiple R-Squared: 0.6569
+
+
+The difference between the R-squared and the adjusted R-squared is that the adjusted R-squared considers the independent variables against the model. Thus as more aggressors are included that don't represent the given data, the R-squared adjusted will decrease. As a result, the R-squared adjusted is more useful to us when we are trying to find the right model for a given set of data.  
+
+
+Since the adjusted R-squared is better in the quadratic model, 0.7604 > 0.6468, we can tell that the quadratic model is a better model to use.  
+
+
+The multiple R-squared is the variation of the variation of the Height that can be explained by the BHDiameter.  
+
+The quadratic model explains the most variability in the Height which we can tell by the higher multiple R-squared and adjusted R-squared. 
+
+```{r}
+anova(spruce.lm) 
+anova(quad.lm) 
+```
+
+Anova is Analysis of Variance.  
+
+The residuals in the quadratic model has a smaller sum of squares as it is 63.007 and the for the linear model, it's 95.703. Thus, we can conclude that the quadratic model is a better model for the data. 
+
+
+
+```{r}
+yhat=with(spruce,predict(quad.lm,data.frame(BHDiameter))) 
+TSS=with(spruce,sum((Height-mean(Height))^2))  
+MSS=with(spruce,sum((yhat-mean(Height))^2)) 
+RSS=with(spruce,sum((Height-yhat)^2))
+```
+
+```{r}
+TSS 
+MSS 
+RSS 
+``` 
+
+```{r}
+MSS/TSS 
+summary(quad.lm)
+```
+We can tell that the MSS/TSS is correct because it matches the R-squared that the R program calculates and we know that the multiple R-squared = MSS/TSS.  
+
+
+
+## Task 6 
+
+```{r}
+cooks20x(quad.lm)  
+```
+
+The cook's model is used to calculate the most influential data points. The y-axis is the cook's distance and the x-axis is the leverage. The values with a high Cook distance are exrtremely influential in changing the model's coefficients.  
+
+The cook's distance for the quadratic model shows me that 24,18, and 21 are extremely influential in that order. 
+
+
+```{r}
+quad2.lm=lm(Height~BHDiameter + I(BHDiameter^2) , data=spruce[-24,]) 
+
+``` 
+ 
+  
+```{r}
+summary(quad2.lm) 
+summary(quad.lm)
+```
+
+Since we removed the data point at 24, the multiple R-squared value in the new quadratic model is higher. The interval of residuals is also smaller for the second quadratic model than the first one. This clearly shows that the second model better explains the variance in the Height as a result of the BHDiameter. 
+
+## Task 7  
+$$l_1 = \beta_0 + \beta_1x$$
+$$l_2 = \beta_0 + \delta + (\beta_1 + \zeta)x$$
+$$\beta_0 + \beta_1x^k = \beta_0 + \delta + (\beta_1 + \zeta)x^k$$ 
+$$\delta = -\zeta x^k$$ 
+The above is a simplified version of the equation at xk.  
+
+If we were to make a piecewise that is more representative of the equations together, then we would write out the equation like the following:
+
+$$y = \beta_0 - \zeta x^k + (\beta_1 + \zeta)x$$
+If we relate like values, then we'd get the following equation: 
+
+
+$$y = \beta_0 + \beta_1x + \zeta(x - x^k)$$
+To convert it into a piecewise then we'd get the following where if c is greater than xk then we get the following:
+
+$$y = \beta_0 + \beta_1x + \zeta(x - x^k)I(x > x^k)$$ 
+
+
+```{r}
+spruce2=within(spruce, X<-(BHDiameter-18)*(BHDiameter>18))
+spruce2 
+lmp = lm(Height ~ BHDiameter + X, data = spruce2) 
+tmp = summary(lmp)
+myf = function(x,coef){
+  coef[1]+coef[2]*(x) + coef[3]*(x-18)*(x-18>0)
+}  
+plot(spruce,main="Piecewise regression")
+curve(myf(x,coef=tmp$coefficients[,"Estimate"] ),add=TRUE, lwd=2,col="Blue")
+abline(v=18)
+text(18,16,paste("R sq.=",round(tmp$r.squared,4) ))
+
+```
+## Task 8
+
+```{r}
+MATH4753DPAI24::myplot(spruce$BHDiameter) 
+
+```
+The my plot function which are the predicted values of height using the model that we regressed earlier from quad.lm. 
+
 
