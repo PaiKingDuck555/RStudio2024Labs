@@ -1,0 +1,30 @@
+---
+title: "Lab 10"
+author: "Damodar Pai"
+date: "`r Sys.Date()`"
+output: 
+  html_document: 
+    toc: yes
+    toc float: yes
+---
+# Tasks 
+
+## Task 1
+```{r}
+
+```
+
+
+## Task 2 
+
+## Task 3
+
+## Task 4 
+
+## Task 5 
+
+## Task 6 
+
+## Task 7 
+
+## Task 8
